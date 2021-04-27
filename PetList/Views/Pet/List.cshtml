@@ -1,0 +1,79 @@
+﻿@model GridViewModel<Pet>
+
+@{
+	ViewData["Title"] = " | Pet Catalog";
+}
+
+<h1>Pet Catalog</h1>
+
+<form asp-action="Filter" method="post" class="form-inline">
+	<label>Owner: </label>
+	<vc:owner-drop-down selected-value="@Model.CurrentRoute.OwnerFilter">
+	</vc:owner-drop-down>
+
+	<label>Classification: </label>
+	<vc:classification-drop-down selected-value="@Model.CurrentRoute.ClassificationFilter">
+	</vc:classification-drop-down>
+
+	<label>Weight: </label>
+	<vc:weight-drop-down selected-value="@Model.CurrentRoute.WeightFilter">
+	</vc:weight-drop-down>
+
+	<button type="submit" class="mr-2">Filter</button>
+	<button type="submit" name="clear" value="true">Clear</button>
+</form>
+
+<form asp-action="Add" asp-controller="Cart" method="post">
+	<table class="table table-bordered table-striped table-sm">
+		<thead class="thead-dark">
+			<tr>
+				<th>
+					<my-sorting-link sort-field="@nameof(Pet.Name)"
+									 current="@Model.CurrentRoute">Name</my-sorting-link>
+				</th>
+				<th>Owner(s)</th>
+				<th>
+					<my-sorting-link sort-field="@nameof(Classification)"
+									 current="@Model.CurrentRoute">Classification</my-sorting-link>
+				</th>
+				<th>
+					<my-sorting-link sort-field="@nameof(Pet.Weight)"
+									 current="@Model.CurrentRoute">Weight</my-sorting-link>
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (Pet pet in Model.Items)
+			{
+				<tr>
+					<td>
+						<partial name="_PetLinkPartial" model="@pet" />
+					</td>
+					<td>
+						@foreach (var ba in pet.PetOwners)
+						{
+							<p>
+								<partial name="_AuthorLinkPartial" model="@ba.Owner" />
+							</p>
+						}
+					</td>
+					<td>@pet.Classification?.Name</td>
+					<td>@pet.Weight.ToString("c")</td>
+					<td>
+						<button type="submit" name="id" value="@pet.PetId">
+							Add To List
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</form>
+
+@{
+	for (int i = 1; i <= Model.TotalPages; i++)
+	{
+		<my-paging-link number="@i" current="@Model.CurrentRoute" />
+	}
+}

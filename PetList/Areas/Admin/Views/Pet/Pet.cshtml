@@ -1,0 +1,85 @@
+﻿@model PetViewModel
+
+@{
+	// this view is used for add, edit, and delete.
+	// Which one is determined by the action method name.
+	var action = ViewContext.RouteData.Values["action"].ToString().Capitalize();
+
+	ViewData["Title"] = $" | {action} Pet";
+}
+
+<h1>@action Pet</h1>
+
+<form asp-action="@action" asp-area="Admin" method="post">
+
+	<input type="hidden" asp-for="Pet.PetId" />
+
+	<div class="form-group row">
+		<div class="col-sm-2"><label>Name:</label></div>
+
+		@* if deleting, display title in a label and put value in hidden field
+			for delete message. Otherwise, provide a text box*@
+		@if (Operation.IsDelete(action))
+		{
+			<div class="col-sm-4"><label>@Model.Pet.Name</label></div>
+			<input type="hidden" asp-for="Pet.Name" />
+		}
+		else
+		{
+			<div class="col-sm-4">
+				<input asp-for="Pet.Name" class="form-control" />
+			</div>
+			<div class="col-sm-6">
+				<span asp-validation-for="Pet.Name" class="text-danger"></span>
+			</div>
+		}
+	</div>
+
+	@* if not deleting, display text boxes and drop-downs for rest of fields*@
+	@if (!Operation.IsDelete(action))
+	{
+		<div class="form-group row">
+			<div class="col-sm-2"><label>Price:</label></div>
+			<div class="col-sm-4">
+				<input asp-for="Pet.Weight" class="form-control" />
+			</div>
+			<div class="col-sm-6">
+				<span asp-validation-for="Pet.Weight" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-sm-2"><label>Classification:</label></div>
+			<div class="col-sm-4">
+				<select asp-for="Pet.ClassificationId" class="form-control"
+						asp-items='@new SelectList(Model.Classifications, "ClassificationId", "Name", Model.Pet.ClassificationId)'>
+				</select>
+			</div>
+			<div class="col-sm-6">
+				<span asp-validation-for="Pet.ClassificationId" class="text-danger"></span>
+			</div>
+		</div>
+		<div class="form-group row">
+			<div class="col-sm-2">
+				<label>Author(s):</label><br />
+			</div>
+			<div class="col-sm-4">
+				<select asp-for="SelectedOwners" class="form-control"
+						asp-items='@new MultiSelectList(Model.Owners, "OwnerId", "FullName", Model.SelectedOwners)'>
+				</select>
+				(Hold down CTRL or CMD key to select multiple)
+			</div>
+			<div class="col-sm-6">
+				<span asp-validation-for="SelectedOwners" class="text-danger"></span>
+			</div>
+		</div>
+	}
+	<div class="row">
+		<div class="col-sm-4 offset-sm-2">
+			<button type="submit" class="btn btn-primary">@action</button>
+
+			@* return user to main admin page after add, or to search page otherwise *@
+			<a asp-action="@(Operation.IsAdd(action) ? "Index" : "Search")"
+			   my-button>Cancel</a>
+		</div>
+	</div>
+</form>

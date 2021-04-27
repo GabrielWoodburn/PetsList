@@ -1,0 +1,38 @@
+﻿@model PetItem
+
+@{
+    ViewData["Title"] = " | Edit List";
+}
+
+<h1>Edit Cart Item</h1>
+<form asp-action="Edit" method="post">
+    <ul class="list-group mb-2">
+        <li class="list-group-item">@Model.Pet.Name</li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-1">
+                    <label>Weight:</label>
+                </div>
+                <div class="col">
+                    @Model.Pet.Weight.ToString("c")
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="form-row">
+                <div class="col-1">
+                    <label asp-for="Quantity">Quantity:</label>
+                </div>
+                <div class="col">
+                    <select asp-for="Quantity" class="form-control" 
+                        my-min-number="1" my-max-number="10"></select>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <input type="hidden" asp-for="Pet.PetId" />
+    <input type="hidden" asp-for="Pet.Name" />
+
+    <button type="submit">Save</button>
+    <a asp-action="Index" my-button>Cancel</a>
+</form>

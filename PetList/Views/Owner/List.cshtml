@@ -1,0 +1,51 @@
+﻿@model GridViewModel<Owner>
+@{
+	ViewData["Title"] = " | Owner Catalog";
+}
+
+<h1>Owner Catalog</h1>
+
+<table class="table table-bordered table-striped table-sm">
+	<thead class="thead-dark">
+		<tr>
+			<th>
+				<my-sorting-link sort-field="@nameof(Owner.FirstName)"
+								 current="@Model.CurrentRoute">First Name</my-sorting-link>
+			</th>
+			<th>
+				<my-sorting-link sort-field="@nameof(Owner.LastName)"
+								 current="@Model.CurrentRoute">Last Name</my-sorting-link>
+			</th>
+			<th>Pet(s)</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (Owner owner in Model.Items)
+		{
+			<tr>
+				<td>
+					<a asp-action="Details" asp-route-id="@owner.OwnerId"
+					   asp-route-slug="@owner.FullName.Slug()">
+						@owner.FirstName
+					</a>
+				</td>
+				<td>
+					<a asp-action="Details" asp-route-id="@owner.OwnerId"
+					   asp-route-slug="@owner.FullName.Slug()">
+						@owner.LastName
+					</a>
+				</td>
+				<td>
+					@foreach (var ba in owner.PetOwners)
+					{
+						<p>
+							<partial name="_PetLinkPartial" model="@ba.Pet" />
+						</p>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<partial name="_PagingLinksPartial" />

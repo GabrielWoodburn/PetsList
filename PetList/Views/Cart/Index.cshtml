@@ -1,0 +1,84 @@
+﻿@model CartViewModel
+
+@{
+	ViewData["Title"] = " | List";
+}
+
+<h1>Your List</h1>
+
+<form asp-action="Clear" method="post">
+	<ul class="list-group mb-4">
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col">
+					Total Weight: @Model.TotalWeight.ToString("c")
+				</div>
+				<div class="col">
+					<div class="float-right">
+						<a asp-action="Checkout" my-button>Add to List</a>
+						<button type="submit">Clear List</button>
+						<a asp-action="List" asp-controller="Book"
+						   asp-all-route-data="@Model.PetGridRoute">Back to Pets</a>
+					</div>
+
+				</div>
+			</div>
+		</li>
+	</ul>
+</form>
+<form asp-action="Remove" method="post">
+	<table class="table">
+		<thead class="thead-dark">
+			<tr>
+				<th>Name</th>
+				<th>Owner(s)</th>
+				<th>Weight</th>
+				<th>Quantity</th>
+				<th>Total Weight</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (PetItem item in Model.List)
+			{
+				@* don't use link partial views here bc cart objects are BookDTO and dictionary<int, string>, not book and author *@
+				<tr>
+					<td>
+						<a asp-action="Details" asp-controller="Pet"
+						   asp-route-id="@item.Pet.PetId"
+						   asp-route-slug="@item.Pet.Name.Slug()">
+							@item.Pet.Name
+						</a>
+					</td>
+					<td>
+
+						@foreach (var keyValuePair in item.Pet.Owners)
+						{
+							<p>
+								<a asp-action="Details" asp-controller="Owner"
+								   asp-route-id="@keyValuePair.Key"
+								   asp-route-slug="@keyValuePair.Value.Slug()">
+									@keyValuePair.Value
+								</a>
+							</p>
+						}
+					</td>
+					<td>@item.Pet.Weight.ToString("c")</td>
+					<td>@item.Quantity</td>
+					<td>@item.TotalWeight.ToString("c")</td>
+					<td>
+						<div class="float-right">
+							<a asp-action="Edit" asp-controller="Cart"
+							   asp-route-id="@item.Pet.PetId"
+							   asp-route-slug="@item.Pet.Name.Slug()"
+							   my-button>Edit</a>
+							<button type="submit" name="id" value="@item.Pet.PetId">
+								Remove
+							</button>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</form>

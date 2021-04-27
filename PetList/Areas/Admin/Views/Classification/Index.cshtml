@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Classification>
+
+@{
+    ViewData["Title"] = " | Manage Classifications";
+}
+
+<h1 class="mb-2">Manage Classifications</h1>
+
+<h5 class="mt-2"><a asp-action="Add" asp-area="Admin">Add a Classification</a></h5>
+
+<table class="table table-bordered table-striped table-sm">
+    <thead>
+        <tr><th>ClassificationId</th><th>Name</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (Classification classification in Model)
+        {
+            <tr>
+                <td>@classification.ClassificationId</td>
+                <td>@classification.Name</td>
+                <td>
+                    <a asp-action="ViewPets" asp-area="Admin" asp-route-id="@classification.ClassificationId"
+                        my-button>View Pets</a>
+                    <a asp-action="Edit" asp-area="Admin" asp-route-id="@classification.ClassificationId"
+                        my-button>Edit</a>
+                    <a asp-action="Delete" asp-area="Admin" asp-route-id="@classification.ClassificationId"
+                        my-button>Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
